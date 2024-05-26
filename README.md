@@ -27,10 +27,12 @@ The analysis is conducted using R and includes the following steps:
 1. Clone the repository:
    ```R
    git clone https://github.com/kreatorkat2004/CRC_TCell_Analysis.git
+   ```
 3. Open the R script in RStudio or any other R environment.
 4. Make sure the required libraries are installed:
    ```R
    install.packages(c("Seurat", "ggplot2", "dplyr"))
+   ```
 6. Set the correct file paths for the datasets.
 7. Run the script to perform the analysis and generate the plots.
 
