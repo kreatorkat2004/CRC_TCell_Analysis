@@ -1,0 +1,168 @@
+---
+title: "STAT 423 Final Project"
+author: "Aaron Wu"
+date: "2024-03-29"
+output: pdf
+---
+```{r}
+library(Seurat)
+library(ggplot2)
+
+eo_crc_data <- readRDS("/Users/aaronwu/Downloads/realdata_crc_tcells_.rds")
+lo_crc_data <- readRDS("/Users/aaronwu/Downloads/sim_data.rds")
+eo_crc_data@meta.data$Onset[eo_crc_data@meta.data$Onset == "LOCRC"] <- "L"
+eo_crc_data@meta.data$Onset[eo_crc_data@meta.data$Onset == "YOCRC"] <- "E"
+eo_crc_data@meta.data$T_cell_type[eo_crc_data@meta.data$T_cell_type == "CD4"] <- "CD4+"
+eo_crc_data@meta.data$T_cell_type[eo_crc_data@meta.data$T_cell_type == "CD8"] <- "CD8+"
+eo_crc_data@meta.data$annotation_final[eo_crc_data@meta.data$annotation_final == "cd4T_hp"] <- "CD4+ T helper"
+eo_crc_data@meta.data$annotation_final[eo_crc_data@meta.data$annotation_final == "cd4T_other"] <- "CD4+ T other"
+eo_crc_data@meta.data$annotation_final[eo_crc_data@meta.data$annotation_final == "cd4T_rg"] <- "CD4+ T regulatory"
+eo_crc_data@meta.data$annotation_final[eo_crc_data@meta.data$annotation_final == "CD8T_em"] <- "CD8+ T effective memory"
+eo_crc_data@meta.data$annotation_final[eo_crc_data@meta.data$annotation_final == "CD8T_ex"] <- "CD8+ T exhausted"
+eo_crc_data@meta.data$annotation_final[eo_crc_data@meta.data$annotation_final == "CD8T_other"] <- "CD8+ T other"
+```
+
+```{r}
+p1 <- DimPlot(eo_crc_data, reduction = "umap", group.by = "Onset") +
+  theme_minimal() + 
+  ggtitle("UMAP—Condition") +
+  xlab("UMAP1") +  
+  ylab("UMAP2") +  
+  scale_color_manual(values = c("#03BFC4", "#F8766D")) +
+  labs(color = "Condition") 
+print(p1)
+ggsave("UMAP-Condition.png", plot = p1, width = 10, height = 6, dpi = 300)
+
+p2 <- DimPlot(eo_crc_data, reduction = "umap", group.by = "T_cell_type") + 
+  theme_minimal() + 
+  ggtitle("UMAP—CD4+/CD8+") +
+  xlab("UMAP1") +  
+  ylab("UMAP2") +  
+  scale_color_manual(values = c("#F8766D", "#03BFC4")) +
+  labs(color = "T_type") 
+print(p2)
+ggsave("UMAP-CD4-CD8.png", plot = p2, width = 10, height = 6, dpi = 300)
+
+p3 <- DimPlot(eo_crc_data, reduction = "umap", group.by = "annotation_final") + 
+  theme_minimal() + 
+  ggtitle("UMAP—Annotation") +
+  xlab("UMAP1") +  
+  ylab("UMAP2") +
+  scale_color_manual(values = c("#FFB6DB", "#32A02D", "#C58BFF", "#FEC44F", "#41B6C4", "#8E0052")) +
+  labs(color = "annotation_final") 
+print(p3)
+ggsave("UMAP-Annotation.png", plot = p3, width = 10, height = 6, dpi = 300)
+```
+
+```{r}
+library(dplyr)
+
+metadata_df <- eo_crc_data@meta.data
+
+count_data <- metadata_df %>%
+  count(Onset, annotation_final) %>%
+  rename(Condition = Onset, Annotation = annotation_final)
+
+count_data <- count_data %>%
+  group_by(Condition) %>%
+  mutate(Proportion = n / sum(n))
+
+p4 <- ggplot(count_data, aes(fill = Condition, y = Proportion, x = Annotation)) +
+  geom_bar(stat = "identity", position = "stack") +
+  geom_text(aes(label = scales::percent(Proportion, accuracy = 0.1)),
+            position = position_stack(vjust = 0.5),
+            color = "black", size = 3.5) +
+  theme_minimal() +
+  labs(fill = "Condition", y = "Proportion", x = NULL) +
+  ggtitle("Proportion of annotation types") +
+  theme(axis.text.x = element_text(angle = 20, hjust = 1))
+print(p4)
+ggsave("Proportion-Annotation-Types-Stack.png", plot = p4, width = 10, height = 6, dpi = 300)
+
+dodge_width <- 0.9
+p5 <- ggplot(count_data, aes(fill = Condition, y = Proportion, x = Annotation)) +
+  geom_bar(position = position_dodge(dodge_width), stat = "identity") +
+  geom_text(aes(label = scales::percent(Proportion, accuracy = 0.1)),
+            position = position_dodge(dodge_width),
+            color = "black", size = 3.5, vjust = -0.25) +  
+  theme_minimal() +
+  labs(fill = "Condition", y = "Proportion") +
+  ggtitle("Proportion of annotation types") + 
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+print(p5)
+ggsave("Proportion-Annotation-Types-Dodge.png", plot = p5, width = 10, height = 6, dpi = 300)
+```
+
+```{r}
+source("/Users/aaronwu/Downloads/SASC_func.R")
+source("/Users/aaronwu/Downloads/realdata_func.R")
+source("/Users/aaronwu/Downloads/comparison_func.R")
+
+umap_data <- lo_crc_data@reductions$umap@cell.embeddings
+meta_data <- lo_crc_data@meta.data
+
+unique_conditions <- unique(lo_crc_data@meta.data$condition_sim)
+condition1 <- unique_conditions[1]
+condition2 <- unique_conditions[2]
+
+#No function that can do this, not sure how to apply
+y0_data <- SubsetByMetadata(lo_crc_data, condition_sim == condition1)
+y1_data <- SubsetByMetadata(lo_crc_data, condition_sim == condition2)
+y0 <- GetAssayData(Subset(lo_crc_data, subset = condition == "A"), slot = "counts")
+y1 <- GetAssayData(Subset(lo_crc_data, subset = condition == "B"), slot = "counts")
+
+#Not sure how to determine the number of clusters necessary to run the 888 model
+result_888 <- run888model(data_seurat = eo_crc_data, H = ???)
+num_data_points <- min(nrow(y0), nrow(y1))  
+max_H <- num_data_points / 3  
+H <- floor(max_H)
+new_result_888 <- run888model(data_seurat = lo_crc_data, H = H)
+
+```
+```{r}
+# Figure 2a: UMAP plot colored by true cell type
+ggplot(eo_crc_data, aes(x = UMAP1, y = UMAP2, color = CellType)) +
+  geom_point() +
+  scale_color_manual(values = pal) +
+  labs(title = "UMAP - Cell Type")
+
+# Figure 2b: UMAP plot colored by condition
+ggplot(eo_crc_data, aes(x = UMAP1, y = UMAP2, color = Condition)) +
+  geom_point() +
+  scale_color_manual(values = pal2) +
+  labs(title = "UMAP - Condition")
+
+# Figure 2c: Proportion of true cell types within the two conditions
+ggplot(eo_crc_data, aes(x = factor(CellType), y = Proportion, fill = Condition)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  scale_fill_manual(values = pal2) +
+  labs(title = "Proportion - Cell Type & Condition")
+
+# Figure 3a: Posterior means and 95% credible intervals of the weights under the two conditions
+ggplot(888model, aes(x = factor(Cluster), y = Weight, fill = Condition)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  geom_errorbar(aes(ymin = LowerCI, ymax = UpperCI), width = .2, position = position_dodge(.9)) +
+  scale_fill_manual(values = pal2) +
+  labs(title = "Weight - Cluster & Condition")
+
+# Figure 3b: The number of cells from each true cell type in the reported clusters
+ggplot(888model, aes(x = factor(Cluster), y = NumCells, fill = CellType)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  scale_fill_manual(values = pal) +
+  labs(title = "Num Cells - Cluster & Cell Type")
+
+# Figure 3c: Posterior summaries of the differences for each cluster of the weights under condition A vs B
+ggplot(888model, aes(x = factor(Cluster), y = WeightDiff, color = CellType)) +
+  geom_point() +
+  geom_errorbar(aes(ymin = LowerCI, ymax = UpperCI), width = .2) +
+  scale_color_manual(values = pal) +
+  labs(title = "Weight Diff - Cluster & Cell Type")
+
+# Figure 3d: The number of cells in each true cell type being assigned into the three types of clusters.
+ggplot(888 model, aes(x = factor(CellType), y = NumCells, fill = ClusterType)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  scale_fill_manual(values = pal2) +
+  labs(title = "Num Cells - Cell Type & Cluster Type")
+
+```
+
