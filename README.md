@@ -26,7 +26,7 @@ The analysis is conducted using R and includes the following steps:
 ## Usage
 1. Clone the repository:
    ```R
-   git clone https://github.com/your-username/CRC_TCell_Analysis.git
+   git clone https://github.com/kreatorkat2004/CRC_TCell_Analysis.git
 3. Open the R script in RStudio or any other R environment.
 4. Make sure the required libraries are installed:
    ```R
