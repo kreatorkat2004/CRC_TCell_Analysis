@@ -23,19 +23,16 @@ The analysis is conducted using R and includes the following steps:
         - Stacked bar plot showing the proportion of annotation types.
         - Dodged bar plot showing the proportion of annotation types.
 
-Usage
-Clone the repository:
-sh
-Copy code
+## Usage
+1. Clone the repository:
 git clone https://github.com/your-username/CRC_TCell_Analysis.git
-Open the R script in RStudio or any other R environment.
-Make sure the required libraries are installed:
-r
-Copy code
+2. Open the R script in RStudio or any other R environment.
+3. Make sure the required libraries are installed:
 install.packages(c("Seurat", "ggplot2", "dplyr"))
-Set the correct file paths for the datasets.
-Run the script to perform the analysis and generate the plots.
-Results
+4. Set the correct file paths for the datasets.
+5. Run the script to perform the analysis and generate the plots.
+
+## Results
 The analysis generates the following plots:
 
 UMAP-Condition.png: UMAP plot colored by condition.
