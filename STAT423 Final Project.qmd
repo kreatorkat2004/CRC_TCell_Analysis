@@ -1,5 +1,4 @@
 ---
-title: "STAT 423 Final Project"
 author: "Aaron Wu"
 date: "2024-03-29"
 output: pdf
