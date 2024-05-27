@@ -39,8 +39,8 @@ The analysis is conducted using R and includes the following steps:
 ## Results
 The analysis generates the following plots:
 
-UMAP-Condition.png: UMAP plot colored by condition.
-UMAP-CD4-CD8.png: UMAP plot colored by T-cell type (CD4+/CD8+).
-UMAP-Annotation.png: UMAP plot colored by annotation.
-Proportion-Annotation-Types-Stack.png: Stacked bar plot of annotation type proportions.
-Proportion-Annotation-Types-Dodge.png: Dodged bar plot of annotation type proportions.
+- UMAP-Condition.png: UMAP plot colored by condition.
+- UMAP-CD4-CD8.png: UMAP plot colored by T-cell type (CD4+/CD8+).
+- UMAP-Annotation.png: UMAP plot colored by annotation.
+- Proportion-Annotation-Types-Stack.png: Stacked bar plot of annotation type proportions.
+- Proportion-Annotation-Types-Dodge.png: Dodged bar plot of annotation type proportions.
