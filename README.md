@@ -3,40 +3,48 @@
 ## Description
 This repository contains the code for analyzing colorectal cancer T-cell data using Seurat and ggplot2. The analysis includes visualization and comparison of different conditions and T-cell annotations.
 
-## Analysis
-The analysis is conducted using R and includes the following steps:
+## Getting Started
 
-1. **Data Preprocessing**:
-    - Load the data.
-    - Modify metadata for consistency.
+### Dependencies
+To use this project, you need to have R and the following R packages installed:
 
-2. **Visualization**:
-    - **UMAP Plots**:
-        - UMAP colored by condition.
-        - UMAP colored by T-cell type (CD4+/CD8+).
-        - UMAP colored by annotation.
-    - **Bar Plots**:
-        - Stacked bar plot showing the proportion of annotation types.
-        - Dodged bar plot showing the proportion of annotation types.
+```R
+install.packages(c("Seurat", "ggplot2", "dplyr"))
+```
 
-## Usage
-1. Clone the repository:
-   ```R
-   git clone https://github.com/kreatorkat2004/CRC_TCell_Analysis.git
-   ```
-3. Open the R script in RStudio or any other R environment.
-4. Make sure the required libraries are installed:
-   ```R
-   install.packages(c("Seurat", "ggplot2", "dplyr"))
-   ```
-6. Set the correct file paths for the datasets.
-7. Run the script to perform the analysis and generate the plots.
+### Installing
+Clone the repository to your local machine and navigate to the project directory:
 
-## Results
-The analysis generates the following plots:
+```bash
+git clone https://github.com/kreatorkat2004/CRC_TCell_Analysis.git
+cd CRC_TCell_Analysis
+```
 
-- UMAP-Condition.png: UMAP plot colored by condition.
-- UMAP-CD4-CD8.png: UMAP plot colored by T-cell type (CD4+/CD8+).
-- UMAP-Annotation.png: UMAP plot colored by annotation.
-- Proportion-Annotation-Types-Stack.png: Stacked bar plot of annotation type proportions.
-- Proportion-Annotation-Types-Dodge.png: Dodged bar plot of annotation type proportions.
+### Executing program
+To run the main analysis script, open R and execute the following command:
+
+```R
+source("scripts/analysis.R")
+```
+
+This will load the necessary datasets, preprocess the data, and generate the plots.
+
+## Help
+For common issues, ensure that all required packages are installed and that the dataset files are correctly placed in the project directory.
+
+```R
+# Example command to check for missing packages
+if (!require("Seurat")) install.packages("Seurat")
+```
+
+## Version History
+- 0.1
+  - Initial Release
+
+## License
+This project is licensed under the MIT License - see the LICENSE.md file for details.
+
+## Acknowledgments
+- Researchers and analysts who have contributed to the field of T-cell analysis.
+- Open-source community for the R packages used in this analysis.
+- Developers of Seurat and ggplot2 for their powerful tools in data visualization and analysis.
